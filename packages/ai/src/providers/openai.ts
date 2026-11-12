@@ -12,8 +12,8 @@ import { AIProvider } from './types';
  * Structured output uses `response_format: json_object` (DeepSeek V4
  * rejects json_schema; json_object works on both OpenAI and DeepSeek).
  */
-const LLM_MODEL = process.env.DEEPSEEK_API_KEY ? (process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash') : 'gpt-4o';
-const LLM_BASE_URL = process.env.DEEPSEEK_API_KEY ? 'https://api.deepseek.com/v1' : undefined;
+const LLM_MODEL = process.env['DEEPSEEK_API_KEY'] ? (process.env['DEEPSEEK_MODEL'] || 'deepseek-v4-flash') : 'gpt-4o';
+const LLM_BASE_URL = process.env['DEEPSEEK_API_KEY'] ? 'https://api.deepseek.com/v1' : undefined;
 
 export class OpenAIProvider implements AIProvider {
   name = 'OPENAI';

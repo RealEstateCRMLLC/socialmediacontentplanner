@@ -11,7 +11,9 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 function verifyHS256(token: string, secret: string): Record<string, unknown> | null {
   const parts = token.split('.');
   if (parts.length !== 3) return null;
-  const [headerB64, payloadB64, sigB64] = parts;
+  const headerB64 = parts[0] as string;
+    const payloadB64 = parts[1] as string;
+    const sigB64 = parts[2] as string;
 
   try {
     const header = JSON.parse(Buffer.from(headerB64, 'base64url').toString('utf8'));
@@ -45,7 +47,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
     return res.status(401).json({ error: 'Missing Authorization Bearer token.' });
   }
 
-  const secret = process.env.AUTH_JWT_SECRET || process.env.NEXTAUTH_SECRET;
+  const secret = process.env['AUTH_JWT_SECRET'] || process.env['NEXTAUTH_SECRET'];
   if (!secret) {
     return res.status(503).json({ error: 'Auth unavailable: AUTH_JWT_SECRET (or NEXTAUTH_SECRET) is not configured.' });
   }
@@ -54,18 +56,18 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
   if (!payload) {
     return res.status(401).json({ error: 'Invalid or expired token.' });
   }
-  const subject = (payload.sub ?? payload.id) as string | undefined;
+  const subject = (payload['sub'] ?? payload['id']) as string | undefined;
   if (!subject) {
     return res.status(401).json({ error: 'Token missing subject claim.' });
   }
   (req as any).user = {
     id: String(subject),
-    role: typeof payload.role === 'string' ? payload.role : 'MEMBER',
+    role: typeof payload['role'] === 'string' ? payload['role'] : 'MEMBER',
   };
   // Workspace scoping: the CRM proxy signs the caller's active workspace into
   // the service JWT. Routes use this as the default scope so dashboard panels
   // see only their workspace's data (cross-service workspace mapping).
-  (req as any).workspaceId = typeof payload.workspaceId === 'string' ? payload.workspaceId : undefined;
+  (req as any).workspaceId = typeof payload['workspaceId'] === 'string' ? payload['workspaceId'] : undefined;
   return next();
 };
 

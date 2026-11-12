@@ -14,7 +14,7 @@ const router = Router();
 router.get('/', async (req, res) => {
   try {
     // Scope: explicit query param > service-JWT workspace claim (CRM proxy)
-    const workspaceId = String(req.query.workspaceId || (req as any).workspaceId || '');
+    const workspaceId = String(req.query['workspaceId'] || (req as any).workspaceId || '');
 
     const notifications = await prisma.notification.findMany({
       where: workspaceId ? { workspaceId } : undefined,
@@ -63,7 +63,7 @@ router.patch('/:id/read', async (req, res) => {
 // PATCH /notifications/read-all?workspaceId=...
 router.patch('/read-all', async (req, res) => {
   try {
-    const workspaceId = String(req.query.workspaceId || req.body?.workspaceId || '');
+    const workspaceId = String(req.query['workspaceId'] || req.body?.workspaceId || '');
     if (!workspaceId) return res.status(400).json({ error: 'workspaceId is required' });
 
     await prisma.notification.updateMany({

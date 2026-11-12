@@ -22,7 +22,7 @@ import {
 // ─── Tavily Search ─────────────────────────────────────────────
 export class TavilySearchProvider implements SearchProvider {
   async search(query: string): Promise<RawResearchItem[]> {
-    const key = process.env.TAVILY_API_KEY;
+    const key = process.env['TAVILY_API_KEY'];
     if (!key) {
       console.warn('[TavilySearchProvider] TAVILY_API_KEY not set — skipping web search.');
       return [];
@@ -48,7 +48,7 @@ export class TavilySearchProvider implements SearchProvider {
 // ─── NewsAPI ───────────────────────────────────────────────────
 export class NewsApiProvider implements NewsProvider {
   async getNews(topic: string): Promise<RawResearchItem[]> {
-    const key = process.env.NEWSAPI_KEY;
+    const key = process.env['NEWSAPI_KEY'];
     if (!key) {
       console.warn('[NewsApiProvider] NEWSAPI_KEY not set — skipping news lookup.');
       return [];

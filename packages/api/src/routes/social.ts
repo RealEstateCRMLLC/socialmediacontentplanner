@@ -18,20 +18,20 @@ const pkceStateStore: Record<string, string> = {};
 // Real OAuth client credentials come from the environment per provider.
 const OAUTH_CLIENTS: Record<string, { clientId?: string; clientSecret?: string; tokenUrl: string; scope: string }> = {
   twitter: {
-    clientId: process.env.TWITTER_CLIENT_ID,
-    clientSecret: process.env.TWITTER_CLIENT_SECRET,
+    clientId: process.env['TWITTER_CLIENT_ID'],
+    clientSecret: process.env['TWITTER_CLIENT_SECRET'],
     tokenUrl: 'https://api.twitter.com/2/oauth2/token',
     scope: 'tweet.read tweet.write users.read offline.access',
   },
   linkedin: {
-    clientId: process.env.LINKEDIN_CLIENT_ID,
-    clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+    clientId: process.env['LINKEDIN_CLIENT_ID'],
+    clientSecret: process.env['LINKEDIN_CLIENT_SECRET'],
     tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
     scope: 'w_member_social',
   },
   meta: {
-    clientId: process.env.META_CLIENT_ID,
-    clientSecret: process.env.META_CLIENT_SECRET,
+    clientId: process.env['META_CLIENT_ID'],
+    clientSecret: process.env['META_CLIENT_SECRET'],
     tokenUrl: 'https://graph.facebook.com/v19.0/oauth/access_token',
     scope: 'pages_manage_posts,pages_read_engagement',
   },
