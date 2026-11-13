@@ -16,6 +16,12 @@ import { requireAuth, rateLimiter } from './middleware/auth';
 
 export const app = express();
 
+// Behind the nginx reverse proxy on Hetzner: without trust proxy,
+// express-rate-limit throws ERR_ERL_UNEXPECTED_X_FORWARDED_FOR on every
+// request carrying X-Forwarded-For (all public traffic). Trust exactly one
+// proxy hop (nginx on localhost).
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
