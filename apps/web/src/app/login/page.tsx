@@ -9,7 +9,7 @@ export default function LoginPage() {
   // in production the authorize() path rejects them, so offering the
   // button there would be a dead end. NEXT_PUBLIC_ALLOW_DEMO_LOGIN=true
   // opts in locally.
-  const demoEnabled = process.env.NEXT_PUBLIC_ALLOW_DEMO_LOGIN === 'true';
+  const demoEnabled = process.env['NEXT_PUBLIC_ALLOW_DEMO_LOGIN'] === 'true';
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
