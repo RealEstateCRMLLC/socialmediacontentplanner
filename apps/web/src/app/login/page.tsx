@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
+  // Demo credentials only exist when explicitly enabled (local dev);
+  // in production the authorize() path rejects them, so offering the
+  // button there would be a dead end. NEXT_PUBLIC_ALLOW_DEMO_LOGIN=true
+  // opts in locally.
+  const demoEnabled = process.env.NEXT_PUBLIC_ALLOW_DEMO_LOGIN === 'true';
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
@@ -15,12 +20,16 @@ export default function LoginPage() {
           <Button onClick={() => signIn('github', { callbackUrl: '/dashboard' })} className="w-full">
             Sign in with GitHub
           </Button>
-          <div className="relative border-t my-4">
-            <span className="absolute -top-3 bg-white px-2 left-1/2 -translate-x-1/2 text-sm text-gray-500">or</span>
-          </div>
-          <Button onClick={() => signIn('credentials', { email: 'test@example.com', password: 'password', callbackUrl: '/dashboard' })} variant="outline" className="w-full">
-            Demo Login (test@example.com)
-          </Button>
+          {demoEnabled && (
+            <>
+              <div className="relative border-t my-4">
+                <span className="absolute -top-3 bg-white px-2 left-1/2 -translate-x-1/2 text-sm text-gray-500">or</span>
+              </div>
+              <Button onClick={() => signIn('credentials', { email: 'test@example.com', password: 'password', callbackUrl: '/dashboard' })} variant="outline" className="w-full">
+                Demo Login (test@example.com)
+              </Button>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
