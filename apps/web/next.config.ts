@@ -3,6 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Standalone output enables clean tarball deploys to Hetzner
   output: 'standalone',
+  // The app is mounted at /contentplanner/ behind nginx (which strips
+  // the prefix). Without assetPrefix the HTML references /_next/static
+  // at the DOMAIN ROOT, where the main CRM's chunks live — every CP
+  // page 404'd its JS and never hydrated. Prefixing assets with the
+  // mount makes nginx route them back to this app. Routes are NOT
+  // prefixed (no basePath): nginx already strips the mount for pages.
+  assetPrefix: '/contentplanner',
   eslint: {
     // Why: this app was never lint-clean and `next/typescript` +
     // `react/no-unescaped-entities` surface dozens of cosmetic findings

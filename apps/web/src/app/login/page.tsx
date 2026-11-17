@@ -18,10 +18,15 @@ export default function LoginPage() {
   // detect the real provider list and render honestly instead.
   const [providers, setProviders] = useState<Record<string, unknown> | null>(null);
   useEffect(() => {
-    fetch('api/auth/providers')
+    // Bounded wait: a stalled fetch must still land on the honest
+    // "not configured" state, never on an eternal spinner.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    fetch('api/auth/providers', { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : {}))
       .then(setProviders)
-      .catch(() => setProviders({}));
+      .catch(() => setProviders({}))
+      .finally(() => clearTimeout(timeout));
   }, []);
 
   const githubConfigured = providers !== null && 'github' in providers;
