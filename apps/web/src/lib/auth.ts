@@ -40,9 +40,6 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, _req) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        // Lookup the actual user in the DB (for v3.2 we simulate this if DB is empty to prevent crashes during local testing without seed data)
-        let user = await prisma.user.findUnique({ where: { email: credentials.email } });
-
         // Demo login is a LOCAL-ONLY convenience so the app can boot without seed
         // data. It is hard-disabled in production and requires an explicit opt-in
         // via ALLOW_DEMO_LOGIN=true. Never leave a fixed credential live in prod.
@@ -50,20 +47,24 @@ export const authOptions: NextAuthOptions = {
           process.env['NODE_ENV'] !== 'production' &&
           process.env['ALLOW_DEMO_LOGIN'] === 'true';
 
-        if (!user && demoLoginEnabled && credentials.email === "test@example.com" && credentials.password === "password") {
+        if (demoLoginEnabled && credentials.email === "test@example.com" && credentials.password === "password") {
           // If the demo user doesn't exist in the DB, create it to ensure JWT payload resolves correctly
-          user = await prisma.user.create({
-            data: {
+          const user = await prisma.user.upsert({
+            where: { email: "test@example.com" },
+            update: {},
+            create: {
               email: "test@example.com",
               name: "Demo User",
             }
           });
-        }
-
-        if (user) {
           return { id: user.id, name: user.name, email: user.email };
         }
 
+        // SECURITY: the User model has no password field, so there is
+        // nothing to verify a credentials login against. Returning a DB
+        // user here (the previous behavior) made any known email a full
+        // impersonation login. Real users authenticate via GitHub OAuth;
+        // credentials succeed ONLY through the gated demo path above.
         return null;
       }
     })
